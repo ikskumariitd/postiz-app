@@ -256,7 +256,7 @@ services:
     networks:
       - temporal-network
     ports:
-      - '8080:8080'
+      - '8085:8080'
 
 volumes:
   postgres-volume:
