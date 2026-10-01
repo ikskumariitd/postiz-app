@@ -6,8 +6,9 @@ Write-Host "==================================================" -ForegroundColor
 $wslDistro = "Ubuntu"
 $composeDir = "/mnt/d/Technical/AI/projects/postiz-social-media-automation/postiz-app"
 
-Write-Host "Checking Docker status in WSL ($wslDistro)..." -ForegroundColor Yellow
-wsl -d $wslDistro -e bash -c "sudo service docker status || service docker status"
+Write-Host "Verifying Docker daemon in WSL ($wslDistro)..." -ForegroundColor Yellow
+wsl -d $wslDistro -u root -- bash -c "pgrep -x dockerd >/dev/null || service docker start"
+wsl -d $wslDistro -e bash -c "docker version >/dev/null 2>&1"
 
 Write-Host "`nLaunching containers via Docker Compose..." -ForegroundColor Yellow
 wsl -d $wslDistro -e bash -c "cd $composeDir && docker compose up -d"
