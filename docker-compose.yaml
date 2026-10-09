@@ -8,6 +8,11 @@ services:
       MAIN_URL: '${MAIN_URL:-http://localhost:4007}'
       FRONTEND_URL: '${FRONTEND_URL:-http://localhost:4007}'
       NEXT_PUBLIC_BACKEND_URL: '${NEXT_PUBLIC_BACKEND_URL:-http://localhost:4007/api}'
+      # The orchestrator fetches stored media from inside this container to push
+      # it to platforms (e.g. X image/video posts). Media paths are built from
+      # FRONTEND_URL and resolve to the app's in-container port 5000, which the
+      # built-in SSRF guard blocks as a private address - local installs opt out.
+      DISABLE_SSRF_PROTECTION: '${DISABLE_SSRF_PROTECTION:-false}'
       JWT_SECRET: 'random string that is unique to every install - just type random characters here!'
       DATABASE_URL: 'postgresql://postiz-user:postiz-password@postiz-postgres:5432/postiz-db-local'
       REDIS_URL: 'redis://postiz-redis:6379'
@@ -124,6 +129,9 @@ services:
       - postiz-uploads:/uploads/
     ports:
       - '4007:5000'
+      # FRONTEND_URL (media paths) uses :5000 so they resolve inside the
+      # container; publish it on the host so the same URLs work in a browser.
+      - '5000:5000'
     networks:
       - postiz-network
       - temporal-network
